@@ -1,6 +1,7 @@
+
 services:
   api-gateway:
-    build: ./gateway
+    build: ./api-gateway
     ports:
       - "3000:3000"
     environment:
@@ -11,16 +12,24 @@ services:
     depends_on:
       - consul
 
-  example-microservice:
-    build: ./microservice
+  authentication:
+    build: ./authentication
     ports:
-      - "3001:3001"
+      - "4000:4000"
     environment:
-      - PORT=3001
-      - HOST_IP=example-microservice
+      - PORT=${PORT}
+      - HOST_IP=authentication
       - CONSUL_HOST=consul
       - CONSUL_PORT=8500
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD} 
+      - REDIS_URL=${REDIS_URL}
+      - REDIS_PORT=${REDIS_PORT}
+      - AUTH0_DOMAIN=${AUTH0_DOMAIN}  
+      - AUTH0_AUDIENCE=${AUTH0_AUDIENCE} 
     depends_on:
+      - redis
       - consul
 
   prometheus:
@@ -44,3 +53,18 @@ services:
     ports:
       - "8500:8500"
     command: "agent -dev -client=0.0.0.0"
+
+  redis:
+    image: "redis:latest"
+    container_name: redis-container
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+
+  # mongo:
+  #   image: "mongo:latest"
+  #   container_name: mongo-container
+  #   ports:
+  #     - "27017:27017"

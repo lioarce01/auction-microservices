@@ -26,7 +26,8 @@
       "@Cache/*": ["src/Cache/*", "dist/Cache/*"],
       "@Main/*": ["src/Main/*", "dist/Main/*"],
       "@Shared/*": ["src/Shared/*", "dist/Shared/*"],
-      "@User/*": ["src/User/*", "dist/User/*"]
+      "@User/*": ["src/User/*", "dist/User/*"],
+      "@Service-Discovery/*": ["src/Service-Discovery/*", "dist/Service-Discovery/*"],
     },
 
     "typeRoots": ["./node_modules/@types", "src/Main/Infrastructure/Types"],

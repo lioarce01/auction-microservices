@@ -4,6 +4,6 @@ scrape_configs:
   - job_name: "api-gateway"
     static_configs:
       - targets: ["api-gateway:3000"]
-  - job_name: "example-microservice"
+  - job_name: "authentication"
     static_configs:
-      - targets: ["example-microservice:3001"]
+      - targets: ["authentication:4000"]

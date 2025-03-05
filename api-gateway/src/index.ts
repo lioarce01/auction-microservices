@@ -1,60 +1,50 @@
-import express, { Request, Response } from 'express';
-import { registerPrometheusMetrics } from './prometheus/metrics';
-import { registerConsul, getService } from './service-discovery/consul';
-import http from 'http';
-import client from 'prom-client';
+import { CoreApp } from './app/core/app';
+import { ConsulAdapter } from './app/adapters/consul';
+import { PrometheusAdapter } from './app/adapters/prometheus';
+import { proxyMiddleware } from './app/middleware/proxy';
+import { getConfig } from './config/env';
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-const SERVICE_NAME = 'api-gateway';
-
-registerPrometheusMetrics(app);
-registerConsul(SERVICE_NAME, Number(PORT));
-
-// Health Check
-app.get('/health', (req, res) => res.send('OK'));
-
-// Prometheus Metrics
-client.collectDefaultMetrics();
-app.get('/metrics', async (req: Request, res: Response) =>
+async function startServer()
 {
-    res.set('Content-Type', client.register.contentType);
-    res.end(await client.register.metrics());
-});
+    const config = getConfig();
+    const core = new CoreApp();
+    config.port = parseInt(config.port as string, 10);
 
-// Dynamic Service Discovery and Proxy
-app.use('/service/:serviceName/*', async (req: Request, res: Response) =>
-{
-    const serviceName = req.params.serviceName;
-    const service = await getService(serviceName);
+    // Health Check
+    core.addRoute('/health', (req, res) => res.send('OK'));
 
-    if (!service) {
-        return res.status(404).json({ error: `Service ${serviceName} not found` });
+    // Prometheus
+    const prometheus = new PrometheusAdapter(core.getApp());
+    core.addRoute('/metrics', prometheus.handleMetrics.bind(prometheus));
+
+    // Consul
+    const serviceDiscovery = new ConsulAdapter(
+        config.serviceName,
+        config.port,
+        {
+            host: process.env.CONSUL_HOST,
+            port: parseInt(process.env.CONSUL_PORT || '8500')
+        }
+    );
+
+    try {
+        await serviceDiscovery.registerService();
+
+        // Proxy Middleware
+        core.getApp().use(
+            '/service/:serviceName/*',
+            proxyMiddleware(serviceDiscovery)
+        );
+
+        // Iniciar servidor
+        core.getApp().listen(config.port, () =>
+        {
+            console.log(`API Gateway running on port ${config.port}`);
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
     }
+}
 
-    const options = {
-        hostname: service.Address,
-        port: service.Port,
-        path: req.originalUrl.replace(`/service/${serviceName}`, ''),
-        method: req.method,
-        headers: req.headers,
-    };
-
-    const proxyReq = http.request(options, (proxyRes) =>
-    {
-        res.writeHead(proxyRes.statusCode || 500, proxyRes.headers);
-        proxyRes.pipe(res, { end: true });
-    });
-
-    req.pipe(proxyReq, { end: true });
-    proxyReq.on('error', (err) =>
-    {
-        console.error(`Proxy error: ${err.message}`);
-        res.status(500).json({ error: 'Proxy request failed' });
-    });
-});
-
-app.listen(PORT, () =>
-{
-    console.log(`API Gateway listening on port ${PORT}`);
-});
+startServer();

@@ -8,7 +8,9 @@
 		"dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts"
 	},
 	"dependencies": {
+		"axios": "^1.8.1",
 		"consul": "^2.0.1",
+		"dotenv": "^16.4.7",
 		"express": "^4.21.2",
 		"prom-client": "^15.1.3"
 	},
