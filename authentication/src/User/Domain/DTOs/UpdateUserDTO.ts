@@ -1,15 +1,15 @@
-import { IsString, IsEmail, IsUrl } from 'class-validator';
+import { IsString, IsEmail, IsUrl, IsNumber } from 'class-validator';
 
 class UpdateUserDTO
 {
-    @IsString()
-      name?: string;
+  @IsString()
+  name?: string;
 
-    @IsEmail()
-      email?: string;
+  @IsEmail()
+  email?: string;
 
-    @IsUrl()
-      picture?: string;
+  @IsUrl()
+  picture?: string;
 }
 
 export default UpdateUserDTO;

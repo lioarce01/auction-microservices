@@ -9,6 +9,7 @@ export default class User extends Base
     public readonly email: string,
     public readonly name: string,
     public readonly picture: string,
+    public readonly roleId: number,
     createdAt: Date,
     updatedAt: Date,
     id?: string,
@@ -37,6 +38,11 @@ export default class User extends Base
     return this.picture;
   }
 
+  getRole(): number
+  {
+    return this.roleId;
+  }
+
   public toDto(): UserDTO
   {
     return new UserDTO(
@@ -45,6 +51,7 @@ export default class User extends Base
       this.name,
       this.email,
       this.picture,
+      this.roleId,
       this.createdAt,
       this.updatedAt,
     );

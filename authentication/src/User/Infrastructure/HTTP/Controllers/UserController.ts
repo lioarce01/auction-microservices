@@ -70,6 +70,7 @@ class UserController
         email,
         name,
         picture,
+        roleId: 1,
       });
 
       return res.status(201).send(successResponse(userDTO));

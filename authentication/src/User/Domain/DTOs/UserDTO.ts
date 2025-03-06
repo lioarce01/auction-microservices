@@ -6,6 +6,7 @@ class UserDTO
     public readonly name: string,
     public readonly email: string,
     public readonly picture: string,
+    public readonly roleId: number,
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
   )

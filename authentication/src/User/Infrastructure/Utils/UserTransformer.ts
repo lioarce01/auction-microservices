@@ -12,6 +12,7 @@ class UserTransformer
       user.email,
       user.name,
       user.picture,
+      user.roleId,
       user.createdAt,
       user.updatedAt,
       user.id,

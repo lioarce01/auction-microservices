@@ -21,6 +21,7 @@ class SaveUserUseCase
       userData.email,
       userData.name,
       userData.picture,
+      userData.roleId,
       new Date(),
       new Date(),
     );
