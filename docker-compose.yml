@@ -78,12 +78,15 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     restart: always
+    
+  mongo:
+    image: "mongo:latest"
+    container_name: mongo-container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
 
 volumes:
   postgres-data:
-
-  # mongo:
-  #   image: "mongo:latest"
-  #   container_name: mongo-container
-  #   ports:
-  #     - "27017:27017"
+  mongo-data:
