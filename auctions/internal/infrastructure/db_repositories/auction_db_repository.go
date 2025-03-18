@@ -36,7 +36,7 @@ func (r *MongoAuctionRepository) List() ([]entities.Auction, error) {
 
 	defer cursor.Close(ctx)
 
-	var auctions []entities.Auction
+	auctions := make([]entities.Auction, 0)
 	for cursor.Next(ctx) {
 		var auction entities.Auction
 		if err := cursor.Decode(&auction); err != nil {
@@ -95,16 +95,13 @@ func (r *MongoAuctionRepository) Update(creatorID string, auction entities.Aucti
 
 	collection := r.DB.Collection("auctions")
 
-	// Convertir auction.ID a ObjectID
 	objectId, err := bson.ObjectIDFromHex(auction.ID.Hex())
 	if err != nil {
 		return entities.Auction{}, err
 	}
 
-	// Filtro para encontrar la subasta por creatorID y auction.ID
 	filter := bson.M{"_id": objectId, "creator_id": creatorID}
 
-	// Documento de actualización
 	update := bson.M{
 		"$set": bson.M{
 			"title":         auction.Title,
@@ -113,13 +110,11 @@ func (r *MongoAuctionRepository) Update(creatorID string, auction entities.Aucti
 		},
 	}
 
-	// Realizar la actualización
 	result, err := collection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return entities.Auction{}, err
 	}
 
-	// Verificar si se actualizó algún documento
 	if result.MatchedCount == 0 {
 		return entities.Auction{}, mongo.ErrNoDocuments
 	}

@@ -41,6 +41,7 @@ services:
       - "8080:8080"
     environment:
       - MONGO_URI=${MONGO_URI}
+      - MONGO_DB_NAME=${MONGO_DB_NAME}
     depends_on:
       - mongo
 
@@ -93,8 +94,11 @@ services:
     container_name: mongo-container
     ports:
       - "27017:27017"
+    env_file:
+      - .env
     volumes:
       - mongo-data:/data/db
+    restart: always
 
 volumes:
   postgres-data:

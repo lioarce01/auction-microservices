@@ -5,6 +5,7 @@ import (
 	"github.com/lioarce01/auction-microservices/internal/application/usecase/auction"
 	"github.com/lioarce01/auction-microservices/internal/infrastructure/database"
 	"github.com/lioarce01/auction-microservices/internal/infrastructure/db_repositories"
+	"github.com/lioarce01/auction-microservices/internal/infrastructure/services"
 	"github.com/lioarce01/auction-microservices/internal/interface/handler"
 )
 
@@ -24,10 +25,11 @@ func SetupRouter() *gin.Engine {
 
 	//create repository
 	auctionRepo := db_repositories.NewMongoAuctionRepository(db)
+	authService := services.NewAuthService("http://authentication:4000/api/v1")
 
 	//create usecase
 	listAuctionsUseCase := auction.NewListAuctionsUseCase(auctionRepo)
-	createAuctionUseCase := auction.NewCreateAuctionUseCase(auctionRepo)
+	createAuctionUseCase := auction.NewCreateAuctionUseCase(auctionRepo, authService)
 	getOneAuctionUseCase := auction.NewGetOneAuctionUseCase(auctionRepo)
 	updateAuctionUseCase := auction.NewUpdateAuctionUseCase(auctionRepo)
 	deleteAuctionUseCase := auction.NewDeleteAuctionUseCase(auctionRepo)

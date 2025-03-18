@@ -13,9 +13,10 @@ import (
 )
 
 func NewDBConnection() (*mongo.Database, error) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("error loading .env file: %v", err)
+	if os.Getenv("GO_ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Println("No se encontró el archivo .env, se utilizarán las variables de entorno definidas")
+		}
 	}
 
 	mongoURI := os.Getenv("MONGO_URI")
