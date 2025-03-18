@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-func NewDBConnection() (*mongo.Client, error) {
+func NewDBConnection() (*mongo.Database, error) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("error loading .env file: %v", err)
@@ -21,6 +21,11 @@ func NewDBConnection() (*mongo.Client, error) {
 	mongoURI := os.Getenv("MONGO_URI")
 	if mongoURI == "" {
 		log.Fatal("MONGO_URI is not set")
+	}
+
+	dbName := os.Getenv("MONGO_DB_NAME")
+	if dbName == "" {
+		log.Fatal("MONGO_DB_NAME is not set")
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURI).
@@ -37,5 +42,6 @@ func NewDBConnection() (*mongo.Client, error) {
 		return nil, fmt.Errorf("error pinging MongoDB: %v", err)
 	}
 	log.Println("Connected to MongoDB")
-	return client, nil
+
+	return client.Database(dbName), nil
 }
