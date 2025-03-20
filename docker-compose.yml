@@ -8,6 +8,8 @@ services:
       - HOST_IP=api-gateway
       - CONSUL_HOST=consul
       - CONSUL_PORT=8500
+    env_file:
+      - .env
     depends_on:
       - consul
 
@@ -42,8 +44,12 @@ services:
     environment:
       - MONGO_URI=${MONGO_URI}
       - MONGO_DB_NAME=${MONGO_DB_NAME}
+      - CONSUL_HOST=${CONSUL_HOST}
+      - CONSUL_PORT=${CONSUL_PORT}
     depends_on:
+      - consul
       - mongo
+      - authentication
 
   prometheus:
     image: prom/prometheus
