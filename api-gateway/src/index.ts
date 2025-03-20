@@ -3,6 +3,7 @@ import { ConsulAdapter } from './app/adapters/consul';
 import { PrometheusAdapter } from './app/adapters/prometheus';
 import { proxyMiddleware } from './app/middleware/proxy';
 import { getConfig } from './config/env';
+import { authMiddleware } from './app/middleware/authMiddleware';
 
 async function startServer()
 {
@@ -29,6 +30,8 @@ async function startServer()
 
     try {
         await serviceDiscovery.registerService();
+
+        core.getApp().use(authMiddleware)
 
         // Proxy Middleware
         core.getApp().use(
