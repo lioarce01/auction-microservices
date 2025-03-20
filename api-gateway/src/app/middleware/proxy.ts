@@ -5,6 +5,8 @@ export const proxyMiddleware = (serviceDiscovery: ServiceDiscovery) =>
 {
     return async (req: any, res: any) =>
     {
+        console.log("🔹 Headers que se envían al servicio:", req.headers);
+
         const serviceName = req.params.serviceName;
 
         try {
@@ -21,6 +23,8 @@ export const proxyMiddleware = (serviceDiscovery: ServiceDiscovery) =>
                 method: req.method,
                 headers: req.headers,
             };
+
+            console.log("🔹 Headers que se envían al servicio:", options.headers);
 
             const proxyReq = http.request(options, (proxyRes) =>
             {

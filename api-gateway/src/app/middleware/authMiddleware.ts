@@ -1,37 +1,31 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { expressjwt } from "express-jwt";
+import jwks from "jwks-rsa";
+import { Request, Response, NextFunction } from "express";
+import { config } from "dotenv"
 
-export interface AuthenticatedRequest extends Request
+config()
+
+console.log("AUTH0_DOMAIN:", process.env.AUTH0_DOMAIN);
+console.log("AUTH0_AUDIENCE:", process.env.AUTH0_AUDIENCE);
+
+export const authMiddleware = expressjwt({
+    secret: jwks.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+    }) as any,
+    audience: process.env.AUTH0_AUDIENCE,
+    issuer: `https://${process.env.AUTH0_DOMAIN}/`,
+    algorithms: ["RS256"],
+});
+
+export const addUserSubMiddleware = (req: Request, res: Response, next: NextFunction) =>
 {
-    user?: any;
-}
-
-export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) =>
-{
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).json({ error: 'Missing Authorization header' });
+    if (!req.user || !req.user.sub) {
+        return res.status(401).json({ error: "User ID not found in token" });
     }
 
-    const parts = authHeader.split(' ');
-    if (parts.length !== 2 || parts[0] !== 'Bearer') {
-        return res.status(401).json({ error: 'Invalid Authorization header format' });
-    }
-
-    const token = parts[1];
-    try {
-        // Para RS256, en lugar de 'JWT_SECRET' deberás obtener la clave pública
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'tu_clave_secreta');
-
-        req.user = decoded;
-
-        // Opcional: propagar el sub en un header personalizado para los microservicios
-        if (decoded && typeof decoded === 'object' && decoded.sub) {
-            req.headers['x-user-sub'] = decoded.sub;
-        }
-
-        next();
-    } catch (error) {
-        return res.status(401).json({ error: 'Invalid token' });
-    }
+    req.headers["x-user-sub"] = req.user.sub;
+    next();
 };
