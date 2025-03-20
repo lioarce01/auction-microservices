@@ -46,8 +46,8 @@ func SetupRouter() *gin.Engine {
 	//create routes
 	auctionRoutes := r.Group("/auctions")
 	{
-		auctionRoutes.GET("/", auctionHandler.ListAllAuctions)
-		auctionRoutes.POST("/", auctionHandler.CreateAuction)
+		auctionRoutes.GET("", auctionHandler.ListAllAuctions)
+		auctionRoutes.POST("", auctionHandler.CreateAuction)
 		auctionRoutes.GET("/:id", auctionHandler.GetAuction)
 		auctionRoutes.PUT("/:id", auctionHandler.UpdateAuction)
 		auctionRoutes.DELETE("/:id", auctionHandler.DeleteAuction)

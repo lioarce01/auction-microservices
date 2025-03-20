@@ -2,6 +2,7 @@ package db_repositories
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/lioarce01/auction-microservices/internal/domain/entities"
@@ -81,11 +82,16 @@ func (r *MongoAuctionRepository) GetOne(id string) (entities.Auction, error) {
 func (r *MongoAuctionRepository) Create(auction entities.Auction) (entities.Auction, error) {
 	collection := r.DB.Collection("auctions")
 
-	_, err := collection.InsertOne(context.TODO(), auction)
+	// Verificar si hay algún error al insertar
+	res, err := collection.InsertOne(context.TODO(), auction)
 	if err != nil {
-		return entities.Auction{}, err
+		// Si hay error, devolver un mensaje adecuado
+		return entities.Auction{}, fmt.Errorf("error al insertar la subasta: %v", err)
 	}
 
+	auction.ID = res.InsertedID.(bson.ObjectID)
+
+	// Asegurarse de que la subasta se insertó correctamente
 	return auction, nil
 }
 
