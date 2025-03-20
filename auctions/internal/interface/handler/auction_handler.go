@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lioarce01/auction-microservices/internal/application/usecase/auction"
 	"github.com/lioarce01/auction-microservices/internal/domain/entities"
-	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type AuctionHandler struct {
@@ -63,33 +62,15 @@ func (h *AuctionHandler) CreateAuction(c *gin.Context) {
 		return
 	}
 
-	userClaims, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
-	}
-	userClaimsMap, ok := userClaims.(map[string]interface{})
-	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user claims"})
-		return
-	}
-
-	creatorIDStr, ok := userClaimsMap["sub"].(string)
-	if !ok || creatorIDStr == "" {
+	sub := c.GetHeader("x-user-sub")
+	if sub == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "ID de usuario no disponible en el token"})
-		return
-	}
-
-	creatorID, err := bson.ObjectIDFromHex(creatorIDStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid creator ID format"})
 		return
 	}
 
 	auction := entities.Auction{
 		Title:        req.Title,
 		Description:  req.Description,
-		CreatorID:    creatorID,
 		CurrentPrice: req.CurrentPrice,
 		EndDate:      req.EndDate,
 		Status:       req.Status,
@@ -97,7 +78,7 @@ func (h *AuctionHandler) CreateAuction(c *gin.Context) {
 		UpdatedAt:    time.Now(),
 	}
 
-	createdAuction, err := h.CreateAuctionUseCase.Execute(auction)
+	createdAuction, err := h.CreateAuctionUseCase.Execute(sub, auction)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

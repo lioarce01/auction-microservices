@@ -19,15 +19,13 @@ func NewCreateAuctionUseCase(repo repositories.AuctionRepository, authService *s
 	}
 }
 
-func (uc *CreateAuctionUseCase) Execute(auction entities.Auction) (entities.Auction, error) {
-	creatorIDStr := auction.CreatorID.Hex()
-
-	creatorID, err := uc.AuthService.GetCreatorID(creatorIDStr)
+func (uc *CreateAuctionUseCase) Execute(sub string, auction entities.Auction) (entities.Auction, error) {
+	creatorIDStr, err := uc.AuthService.GetCreatorID(sub)
 	if err != nil {
 		return entities.Auction{}, err
 	}
 
-	objectID, err := bson.ObjectIDFromHex(creatorID)
+	objectID, err := bson.ObjectIDFromHex(creatorIDStr)
 	if err != nil {
 		return entities.Auction{}, err
 	}
