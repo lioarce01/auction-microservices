@@ -29,7 +29,7 @@ func (s *AuthService) GetCreatorID(token string) (string, error) {
 
 	fmt.Println("📡 [AuthService] Enviando solicitud a:", req.URL)
 	client := &http.Client{
-		Timeout: 5 * time.Second, // ⚠️ Evita que la solicitud se quede colgada.
+		Timeout: 5 * time.Second,
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -40,7 +40,7 @@ func (s *AuthService) GetCreatorID(token string) (string, error) {
 	fmt.Println("✅ [AuthService] Respuesta recibida, código:", resp.StatusCode)
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body) // Reemplazado ioutil.ReadAll por io.ReadAll
+		body, _ := io.ReadAll(resp.Body)
 		fmt.Printf("⚠️ [AuthService] Respuesta no OK: %d, Body: %s\n", resp.StatusCode, string(body))
 		return "", fmt.Errorf("failed to fetch creator ID, status code: %d", resp.StatusCode)
 	}

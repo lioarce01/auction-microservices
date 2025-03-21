@@ -34,21 +34,13 @@ async function startServer()
     try {
         await serviceDiscovery.registerService();
 
-        // core.getApp().use(authMiddleware)
+        core.getApp().use(authMiddleware)
 
         // Proxy Middleware
         core.getApp().use(
             '/service/:serviceName/*',
             proxyMiddleware(serviceDiscovery)
         );
-
-        core.getApp().options('/service/:serviceName/*', (req, res) =>
-        {
-            res.setHeader('Access-Control-Allow-Origin', '*');
-            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-            res.send();
-        });
 
         // Iniciar servidor
         core.getApp().listen(config.port, () =>

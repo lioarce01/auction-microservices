@@ -32,7 +32,7 @@ func SetupRouter() *gin.Engine {
 	createAuctionUseCase := auction.NewCreateAuctionUseCase(auctionRepo, authService)
 	getOneAuctionUseCase := auction.NewGetOneAuctionUseCase(auctionRepo)
 	updateAuctionUseCase := auction.NewUpdateAuctionUseCase(auctionRepo)
-	deleteAuctionUseCase := auction.NewDeleteAuctionUseCase(auctionRepo)
+	deleteAuctionUseCase := auction.NewDeleteAuctionUseCase(auctionRepo, authService)
 
 	//create handler
 	auctionHandler := handler.NewAuctionHandler(

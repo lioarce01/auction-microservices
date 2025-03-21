@@ -63,15 +63,13 @@ func (r *MongoAuctionRepository) GetOne(id string) (entities.Auction, error) {
 	}
 
 	collection := r.DB.Collection("auctions")
-
 	filter := bson.M{"_id": objectId}
 
 	var auction entities.Auction
-
 	err = collection.FindOne(ctx, filter).Decode(&auction)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return entities.Auction{}, nil
+			return entities.Auction{}, fmt.Errorf("auction not found")
 		}
 		return entities.Auction{}, err
 	}
@@ -82,16 +80,13 @@ func (r *MongoAuctionRepository) GetOne(id string) (entities.Auction, error) {
 func (r *MongoAuctionRepository) Create(auction entities.Auction) (entities.Auction, error) {
 	collection := r.DB.Collection("auctions")
 
-	// Verificar si hay algún error al insertar
 	res, err := collection.InsertOne(context.TODO(), auction)
 	if err != nil {
-		// Si hay error, devolver un mensaje adecuado
 		return entities.Auction{}, fmt.Errorf("error al insertar la subasta: %v", err)
 	}
 
 	auction.ID = res.InsertedID.(bson.ObjectID)
 
-	// Asegurarse de que la subasta se insertó correctamente
 	return auction, nil
 }
 

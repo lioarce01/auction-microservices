@@ -151,11 +151,21 @@ func (h *AuctionHandler) UpdateAuction(c *gin.Context) {
 }
 
 func (h *AuctionHandler) DeleteAuction(c *gin.Context) {
-	id := c.Param("id")
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization token missing"})
+		return
+	}
 
-	creatorID := c.GetString("userID")
+	token := strings.TrimPrefix(authHeader, "Bearer ")
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
+		return
+	}
 
-	err := h.DeleteAuctionUseCase.Execute(creatorID, id)
+	auctionID := c.Param("id")
+
+	err := h.DeleteAuctionUseCase.Execute(token, auctionID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
