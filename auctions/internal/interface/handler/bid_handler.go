@@ -47,8 +47,7 @@ func (h *BidHandler) CreateBid(c *gin.Context) {
 		return
 	}
 	var req struct {
-		Price  float64 `json:"price" binding:"required"`
-		UserID string  `json:"user_id" binding:"required"`
+		Price float64 `json:"price" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
