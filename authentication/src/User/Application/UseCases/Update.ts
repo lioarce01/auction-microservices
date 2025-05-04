@@ -28,6 +28,7 @@ class UpdateUserUseCase
       data.email ?? existingUser.email,
       data.name ?? existingUser.name,
       data.picture ?? existingUser.picture,
+      existingUser.roleId,
       existingUser.createdAt,
       new Date(),
       existingUser.id,

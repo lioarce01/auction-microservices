@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsDate } from 'class-validator';
+import { IsString, IsEmail, IsDate, IsNumber } from 'class-validator';
 import UserDTO from './UserDTO';
 
 class ValidatableUserDto extends UserDTO
@@ -17,6 +17,9 @@ class ValidatableUserDto extends UserDTO
 
   @IsString()
   declare picture: string;
+
+  @IsNumber()
+  declare role: number;
 
   @IsDate()
   declare createdAt: Date;

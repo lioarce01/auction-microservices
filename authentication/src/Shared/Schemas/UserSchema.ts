@@ -12,6 +12,7 @@ const UserResponseSchema = {
                 name: { type: 'string' },
                 email: { type: 'string', format: 'email' },
                 picture: { type: 'string' },
+                roleId: { type: 'number' },
                 createdAt: { type: 'string' },
                 updatedAt: { type: 'string' }
             },
@@ -36,6 +37,7 @@ const UserArrayResponseSchema = {
                     name: { type: 'string' },
                     email: { type: 'string', format: 'email' },
                     picture: { type: 'string' },
+                    roleId: { type: 'number' },
                     createdAt: { type: 'string' },
                     updatedAt: { type: 'string' }
                 },

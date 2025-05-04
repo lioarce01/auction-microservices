@@ -12,8 +12,7 @@ class MetricService
     async handleRequest()
     {
         const end = this.metricRepository.startRequestTimer();
-        // Simula la lógica de procesamiento...
-        end(); // Registra la duración de la solicitud
+        end();
         await this.metricRepository.incrementRequestCount();
     }
 }
