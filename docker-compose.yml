@@ -51,6 +51,26 @@ services:
       - mongo
       - authentication
 
+  payments:
+    build: ./payments
+    ports:
+      - "4001:4001"
+    environment:
+      - HOST_IP=payments
+      - MERCADOPAGO_ACCESS_TOKEN=${MERCADOPAGO_ACCESS_TOKEN}
+      - DATABASE_URL=${DATABASE_URL}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - REDIS_USERNAME=${REDIS_USERNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD} 
+      - REDIS_URL=${REDIS_URL}
+      - REDIS_PORT=${REDIS_PORT}
+    depends_on:
+      - consul
+      - redis
+      - postgres
+
   prometheus:
     image: prom/prometheus
     ports:
@@ -109,3 +129,4 @@ services:
 volumes:
   postgres-data:
   mongo-data:
+  redis-data:
