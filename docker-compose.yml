@@ -18,7 +18,6 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - PORT=${PORT}
       - HOST_IP=authentication
       - CONSUL_HOST=consul
       - CONSUL_PORT=8500
@@ -57,6 +56,8 @@ services:
       - "4001:4001"
     environment:
       - HOST_IP=payments
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
       - MERCADOPAGO_ACCESS_TOKEN=${MERCADOPAGO_ACCESS_TOKEN}
       - DATABASE_URL=${DATABASE_URL}
       - POSTGRES_USER=${POSTGRES_USER}
