@@ -11,4 +11,4 @@ RUN go build -o payments .
 
 EXPOSE 8080
 
-CMD ["./payment-service"]
+CMD ["./payments"]

@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"log"
 	"payments/config"
 	"payments/internal/application/usecase"
 	"payments/internal/infrastructure/gateway"
 	"payments/internal/infrastructure/repository"
 	"payments/internal/interfaces/handlers"
 	"payments/internal/interfaces/worker"
+	servicediscovery "payments/internal/service-discovery"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,6 +17,17 @@ import (
 func main() {
 	// Load config
 	cfg := config.Load()
+
+	// Initialize Consul service discovery
+	consulService, err := servicediscovery.NewConsulService()
+	if err != nil {
+		log.Fatal("error initializing consul:", err)
+	}
+
+	err = consulService.RegisterService("auctions", "auctions", "auctions", 8080)
+	if err != nil {
+		log.Fatalf("error registering consul service: %v", err)
+	}
 
 	// Infrastructure layer
 	db := repository.NewPostgresDB(cfg.DB)

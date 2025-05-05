@@ -26,13 +26,13 @@ func (uc *ExpirationUseCase) Execute(ctx context.Context) error {
 	// Convertimos el threshold a milisegundos para el repositorio
 	ms := uc.expirationThreshold.Milliseconds()
 
-	// 1. Obtener todos los pagos vencidos
+	// Obtener todos los pagos vencidos
 	payments, err := uc.repo.FindExpired(ms)
 	if err != nil {
 		return fmt.Errorf("failed to find expired payments: %w", err)
 	}
 
-	// 2. Para cada pago, cambiar el estado a "expired"
+	// Para cada pago, cambiar el estado a "expired"
 	for _, p := range payments {
 		p.Status = entity.StatusExpired
 		if err := uc.repo.UpdateStatus(p.AuctionID, string(p.Status)); err != nil {
