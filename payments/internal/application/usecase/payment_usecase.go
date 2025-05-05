@@ -44,6 +44,6 @@ func (uc *PaymentUseCase) HandleWebhook(paymentID string) error {
 		return err
 	}
 
-	payment.Status = status
+	payment.Status = entity.PaymentStatus(status)
 	return uc.repo.Save(payment)
 }

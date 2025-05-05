@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"payments/config"
 	"payments/internal/application/usecase"
 	"payments/internal/infrastructure/gateway"
@@ -33,7 +34,9 @@ func main() {
 
 	// Start expiration worker
 	expirationWorker := worker.NewExpirationWorker(paymentRepo)
-	go expirationWorker.Start()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go expirationWorker.Start(ctx)
 
 	r.Run(":4001")
 }
