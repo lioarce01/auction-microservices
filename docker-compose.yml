@@ -21,16 +21,13 @@ services:
       - HOST_IP=authentication
       - CONSUL_HOST=consul
       - CONSUL_PORT=8500
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=${DATABASE_URL_AUTH}
       - REDIS_USERNAME=${REDIS_USERNAME}
       - REDIS_PASSWORD=${REDIS_PASSWORD} 
       - REDIS_URL=${REDIS_URL}
       - REDIS_PORT=${REDIS_PORT}
       - AUTH0_DOMAIN=${AUTH0_DOMAIN}  
       - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
     depends_on:
       - redis
       - consul
@@ -59,10 +56,7 @@ services:
       - CONSUL_HOST=consul
       - CONSUL_PORT=8500
       - MERCADOPAGO_ACCESS_TOKEN=${MERCADOPAGO_ACCESS_TOKEN}
-      - DATABASE_URL=${DATABASE_URL}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - DATABASE_URL=${DATABASE_URL_PAYMENTS}
       - REDIS_USERNAME=${REDIS_USERNAME}
       - REDIS_PASSWORD=${REDIS_PASSWORD} 
       - REDIS_URL=${REDIS_URL}
@@ -111,9 +105,10 @@ services:
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_DB=${POSTGRES_DB_AUTH}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
     restart: always
     
   mongo:
