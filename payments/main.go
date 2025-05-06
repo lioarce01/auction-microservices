@@ -30,7 +30,7 @@ func main() {
 	}
 
 	// Infrastructure layer
-	db := repository.NewPostgresDB(cfg.DB)
+	db := repository.NewPostgresDB(cfg.DatabaseURL)
 	paymentRepo := repository.NewPostgresPaymentRepo(db)
 	mpGateway := gateway.NewMercadoPagoAdapter(cfg.MercadoPagoToken)
 

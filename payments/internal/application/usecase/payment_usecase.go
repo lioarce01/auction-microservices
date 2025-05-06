@@ -17,14 +17,12 @@ func NewPaymentUseCase(repo ports.PaymentRepository, gateway ports.PaymentGatewa
 func (uc *PaymentUseCase) CreatePayment(auctionID string, amount float64) (*entity.Payment, error) {
 	payment := entity.NewPayment(auctionID, amount)
 
-	// Call payment gateway
 	paymentLink, err := uc.gateway.CreatePayment(amount, "Auction Payment", auctionID)
 	if err != nil {
 		return nil, err
 	}
 	payment.PaymentLink = paymentLink
 
-	// Persist
 	if err := uc.repo.Save(payment); err != nil {
 		return nil, err
 	}
@@ -38,7 +36,6 @@ func (uc *PaymentUseCase) HandleWebhook(paymentID string) error {
 		return err
 	}
 
-	// Get payment by external reference (auctionID)
 	payment, err := uc.repo.FindByAuctionID(paymentID)
 	if err != nil {
 		return err

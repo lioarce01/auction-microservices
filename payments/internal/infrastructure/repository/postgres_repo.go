@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"payments/config"
 	"payments/internal/domain/entity"
 	"payments/internal/domain/ports"
 	"time"
@@ -19,16 +18,8 @@ func NewPostgresPaymentRepo(db *sql.DB) ports.PaymentRepository {
 	return &PostgresPaymentRepo{db: db}
 }
 
-func NewPostgresDB(cfg config.DBConfig) *sql.DB {
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		cfg.Host,
-		cfg.Port,
-		cfg.User,
-		cfg.Password,
-		cfg.Name,
-	)
-
-	db, err := sql.Open("postgres", connStr)
+func NewPostgresDB(databaseURL string) *sql.DB {
+	db, err := sql.Open("postgres", databaseURL)
 	if err != nil {
 		panic(fmt.Sprintf("failed to connect to database: %v", err))
 	}
